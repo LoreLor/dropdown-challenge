@@ -5,12 +5,13 @@ import { Empresa } from '../../models/Empresa';
 
 
 const EmpresaForm = () => {
+    const codigoStorage = localStorage.getItem('codigo')
     
     const newNombre = useRef('')
     const newRazonsocial = useRef('')
     const newNit = useRef('')
     const newTelefono = useRef('')
-    const newCodigo = useRef(0)
+    const newCodigo = useRef(codigoStorage)
 
     async function createEmpresa() {
         const {data}= await supabase
@@ -21,7 +22,7 @@ const EmpresaForm = () => {
                     razon_social:newRazonsocial.current.value,
                     nit:newNit.current.value,
                     telefono:newTelefono.current.value,
-                    codigo:newCodigo.current.value,
+                    codigo:newCodigo,
                 }
             )
             .single();
@@ -48,7 +49,7 @@ const EmpresaForm = () => {
             newRazonsocial.current.value='',
             newNit.current.value='',
             newTelefono.current.value='',
-            newCodigo.current.value=0
+            newCodigo.current.value=""
         )
     }
 
@@ -63,14 +64,12 @@ const EmpresaForm = () => {
             <div className="m-3">
                 <label htmlFor="codigo" className="form-label d-flex">Código: </label>
                 <input
-                    type="number"
+                    type="text"
                     className="form-control"
                     id="codigo" 
-                    ref={newCodigo}
-                    min={1}         
+                    value={newCodigo}        
                     placeholder="Ingrese un codigo"
-                    required
-                    autoFocus                
+                    required                   
                 />
             </div>
             <div className="m-3">

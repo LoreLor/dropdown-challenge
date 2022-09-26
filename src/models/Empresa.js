@@ -3,7 +3,7 @@ export class Empresa{
     razon_social="";
     nit="";
     telefono="";
-    codigo=0;
+    codigo="";
 
     constructor(nombre,razon_social,nit,telefono,codigo){
         this.nombre=nombre;

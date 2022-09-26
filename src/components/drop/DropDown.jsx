@@ -3,18 +3,20 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { supabase } from '../../config/client';
-import ButtonModal from '../modal/ButtonModal';
+
+
 
 
 
 const DropDown = () => {
     const [empresas, setEmpresas] = useState([])
-    const inpRef = useRef()
+
 
     async function fetchEmpresas() {
         const { data } = await supabase
             .from('empresas')
             .select('*')
+            
         setEmpresas(data)
         console.log('data', data)
     }
@@ -24,10 +26,10 @@ const DropDown = () => {
     }, []);
 
 
+    
 
     return (
         <div>
-
             <Autocomplete
                 disablePortal
                 id="combo-box-demo"
@@ -35,6 +37,7 @@ const DropDown = () => {
                 autoHighlight
                 getOptionLabel={(option) => option.codigo}
                 sx={{ width: 300 }}
+                
                 renderOption={(props, option) => (
                     <div>
                         <Box
@@ -54,11 +57,10 @@ const DropDown = () => {
                         label="Empresas"
                         inputProps={{
                             ...codigo.inputProps,
-
+                            autoComplete: 'new-password',
                         }} />
 
                 } />
-            <ButtonModal value={inpRef} />
         </div>
     )
 }
