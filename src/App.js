@@ -3,9 +3,12 @@ import { supabase } from './config/client';
 import { Empresa } from './models/Empresa';
 import { Box, Button, Modal } from '@mui/material';
 import './App.css';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 
-
+/**
+ * Estilo de Box
+ */
 const style = {
   position: 'absolute',
   top: '50%',
@@ -23,17 +26,16 @@ function App() {
   const [empresas, setEmpresas] = useState([]);
   const [tablaEmpresas, setTablaEmpresas] = useState([]);
   const [busqueda, setBusqueda] = useState("");
-
-/**
- * Modal
- */
   const [open, setOpen] = useState(false);
 
+  
   const fetchEmpresas = async () => {
     try {
       const { data } = await supabase
         .from('empresas')
-        .select('*')
+        .select('*',{count:'exact'})
+        .order("id", { ascending: true }) 
+        
       setEmpresas(data);
       setTablaEmpresas(data)
       console.log('data', data)
@@ -47,15 +49,16 @@ function App() {
     fetchEmpresas();
   }, []);
 
+  // Busqueda
   const handleChange = (e) => {
     setBusqueda(e.target.value);
     filtrar(e.target.value)
     console.log('busqueda', e.target.value)
   }
 
+ 
   const filtrar = (codigo) => {
-    let resultado = tablaEmpresas.filter(
-      (em) => {
+    let resultado = tablaEmpresas.filter((em) => {
         if (em.codigo.toString().toLowerCase().includes(codigo.toLowerCase())) {
           return em
         }
@@ -63,13 +66,19 @@ function App() {
     setEmpresas(resultado)
   }
 
+// Modal
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+// Formulario de creacion de Empresa
+  // valor de Codigo por defecto
   const newNombre = useRef('')
   const newRazonsocial = useRef('')
   const newNit = useRef('')
   const newTelefono = useRef('')
   const newCodigo = useRef(busqueda)
  
-
+// api
   async function createEmpresa() {
     const { data } = await supabase
       .from('empresas')
@@ -86,10 +95,6 @@ function App() {
     console.log('data', data)
   }
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-
   const handleSubmit = (e) => {
     e.preventDefault();
     let newEmpresa = new Empresa(
@@ -99,7 +104,6 @@ function App() {
       newTelefono.current.value,
       newCodigo.current.value
     )
-
     createEmpresa(newEmpresa)
     console.log('newEmpresa', newEmpresa)
     newEmpresa = (
@@ -108,10 +112,17 @@ function App() {
       newNit.current.value = '',
       newTelefono.current.value = '',
       newCodigo.current.value = ''
-    )
-    fetchEmpresas()
-  }
+      )
+      fetchEmpresas()
+    }
 
+    // Scroll en Tabla
+    const fetchMoreData = () => {
+        setEmpresas(
+          empresas.concat(empresas.from({ length: 20 }))
+        );
+      
+    };
 
   return (
     <div className="App">
@@ -215,6 +226,7 @@ function App() {
               <table className='table table-hover'>
                 <thead>
                   <tr>
+                    <th scope='col'>N°</th>
                     <th scope='col'>Codigo</th>
                     <th scope='col'>Nombre</th>
                     <th scope='col'>Razon Social</th>
@@ -222,9 +234,11 @@ function App() {
                     <th scope='col'>Telefono</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {empresas && empresas.map((empresa) => (
+                <tbody >
+                
+                  {empresas.map((empresa) => (
                     <tr key={empresa.id}>
+                      <td>{empresa.id}</td>
                       <td>{empresa.codigo}</td>
                       <td>{empresa.nombre}</td>
                       <td>{empresa.razon_social}</td>
@@ -239,7 +253,6 @@ function App() {
           </div>
         </div>
       </header>
-
     </div>
   );
 }
