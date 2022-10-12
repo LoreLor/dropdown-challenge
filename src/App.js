@@ -3,7 +3,6 @@ import { supabase } from './config/client';
 import { Empresa } from './models/Empresa';
 import { Box, Button, Modal } from '@mui/material';
 import './App.css';
-import InfiniteScroll from 'react-infinite-scroll-component';
 
 
 /**
@@ -115,14 +114,6 @@ function App() {
       )
       fetchEmpresas()
     }
-
-    // Scroll en Tabla
-    const fetchMoreData = () => {
-        setEmpresas(
-          empresas.concat(empresas.from({ length: 20 }))
-        );
-      
-    };
 
   return (
     <div className="App">
